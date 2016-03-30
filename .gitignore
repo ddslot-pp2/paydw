@@ -1,0 +1,8 @@
+*.o
+core
+CMakeFiles/
+CMakeLists.txt
+.sconsign.dblite
+bin/
+log/
+
