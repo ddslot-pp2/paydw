@@ -43,9 +43,11 @@ std::string get_tournament_infos(int uid, const std::vector<tournament_info>& to
 
   json11::Json::array results = {};
   for(auto i=0; i<tournament_infos.size(); i++) {
-    json11::Json::object obj = { { "uid", result[i].uid },
-                       	       { "ranking", result[i].ranking },
-			       { "img", result[i].img } };
+    json11::Json::object obj = { 
+      { "uid", result[i].uid },
+      { "ranking", result[i].ranking },
+      { "name", result[i].name },
+      { "img", result[i].img } };
     results.push_back(obj);
   }
 
@@ -55,18 +57,26 @@ std::string get_tournament_infos(int uid, const std::vector<tournament_info>& to
 
 void tournament_refresh_req(HttpServer::Response& response, const ptree& payload) {
 
-  auto uid = payload.get<int>("uid");
   auto zone = payload.get<int>("zone");
-  auto ranking = 100;
-  std::string imgs[3] = { "", };
+  auto uid = payload.get<int>("uid");
+  auto name = payload.get<std::string>("name");
 
-  std::cout << "uid: " << uid << std::endl;
   std::cout << "zone: " << zone << std::endl;
+  std::cout << "uid: " << uid << std::endl;
+  std::cout << "name: " << name << std::endl;
 
   if(!scheduler_md::get().get_tournament_on() || uid < 0) {
     std::cout << "현재 토너먼트 중이 아니라서 refresh 처리안함" << std::endl;
     return;
   }
+
+  auto tournament_ptr = scheduler_md::get().get_tournament(zone);
+  if(!tournament_ptr) {
+    std::cout << "[error] does not exist tournament_ptr" << std::endl;
+    return;
+  }
+
+  tournament_ptr->set_name(uid, name);
 
   std::string query = "call refresh_tournament_user("+ std::to_string(zone) + "," + std::to_string(uid) + ");";
 
@@ -76,6 +86,8 @@ void tournament_refresh_req(HttpServer::Response& response, const ptree& payload
   while(rs->next()) {
     tournament_info tmp;
     tmp.uid = rs->getInt("uid");
+    // uid 기준으로 name 가져오기
+    tmp.name = tournament_ptr->get_name(tmp.uid);
     tmp.win_credit = rs->getInt("win_credit");
     tmp.ranking = rs->getInt("ranking");
     tmp.img = rs->getString("img");
@@ -95,25 +107,31 @@ void tournament_refresh_req(HttpServer::Response& response, const ptree& payload
 
 void tournament_update_req(HttpServer::Response& response, const ptree& payload) {
 
-  auto uid = payload.get<int>("uid");
   auto zone = payload.get<int>("zone");
+  auto uid = payload.get<int>("uid");
   auto win_credit = payload.get<int>("win_credit");
-  auto ranking = 100;
-  std::string imgs[3] = { "", };
+  auto name = payload.get<std::string>("name");
 
   if(!scheduler_md::get().get_tournament_on() || uid < 0) {
     std::cout << "현재 토너먼트 중이 아니라서 update 처리안함" << std::endl;
     return;
   }
 
-  std::cout << "uid: " << uid << std::endl;
   std::cout << "zone: " << zone << std::endl;
+  std::cout << "uid: " << uid << std::endl;
   std::cout << "win credit: " << win_credit << std::endl;
+  std::cout << "name: " << name << std::endl;
 
-  tournament_ptr tournament = scheduler_md::get().get_tournament(zone);
-  if(tournament) {
-    tournament->add_win_credit(win_credit);
+  auto tournament_ptr = scheduler_md::get().get_tournament(zone);
+
+  if(!tournament_ptr) {
+    std::cout << "[error] does not exist tournament_ptr" << std::endl;
+    return;
   }
+
+  tournament_ptr->add_win_credit(win_credit);
+  tournament_ptr->set_name(uid, name);
+  
 
   // db 작업
   std::string query = "call update_tournament_user("+ std::to_string(zone) + "," + std::to_string(uid) + "," + std::to_string(win_credit) + ")";
@@ -125,6 +143,8 @@ void tournament_update_req(HttpServer::Response& response, const ptree& payload)
   while(rs->next()) {
     tournament_info tmp;
     tmp.uid = rs->getInt("uid");
+    // uid 기준으로 name 가져오기
+    tmp.name = tournament_ptr->get_name(tmp.uid);
     tmp.win_credit = rs->getInt("win_credit");
     tmp.ranking = rs->getInt("ranking");
     tmp.img = rs->getString("img");

@@ -13,6 +13,23 @@ void tournament::add_win_credit(int win_credit) {
   win_credit_ += win_credit;
 }
 
+std::string tournament::get_name(int uid) {
+  m.lock();
+  if(names_.find(uid) != names_.end()) {
+    m.unlock();
+    return names_[uid];
+  }
+  m.unlock();
+  return "";
+}
+
+void tournament::set_name(int uid, std::string name) {
+  m.lock();
+  names_[uid] = name;
+  //if(names_.find(uid) != names_.end()) names_[uid] = name;
+  m.unlock();
+}
+
 scheduler_md::scheduler_md() : is_run_(true), is_tournament_on_(false), remaining_time_(0) {
   type_ = tournament_type::end;
 }
@@ -78,7 +95,7 @@ int scheduler_md::get_timestamp() {
 
 tournament_ptr scheduler_md::get_tournament(int zone) {
 
-  if(static_cast<int>(tournaments_.size()) < zone && is_tournament_on_) {
+  if(static_cast<int>(tournaments_.size()) > zone && zone >= 0) { 
     return tournaments_[zone];
   }
   

@@ -3,7 +3,9 @@
 #include <atomic>
 #include <time.h>
 #include <vector>
+#include <map>
 #include <memory>
+#include "lib/ddlock.hpp"
 
 class tournament {
 public:
@@ -12,8 +14,14 @@ public:
 
   void add_win_credit(int credit);
   int get_win_credit() { return win_credit_; }
+
+  std::string get_name(int uid);
+  void set_name(int uid, std::string name);
+
 private:
   std::atomic<int> win_credit_;
+  std::map<int, std::string> names_;
+  spin_mutex m;
 };
 
 enum tournament_type { start, end };

@@ -10,6 +10,7 @@ struct tournament_info {
   int uid;
   int win_credit;
   int ranking;
+  std::string name;
   std::string img;
 };
 
