@@ -178,7 +178,7 @@ bool dd_slot::init() {
 
   set_reel(3, { Seven, Mangosteen, Wild, Scatter, Bar, Watermelon, Mangosteen, Bar3, Seven3 ,Bar2, Watermelon, Cherry, Bar3, Mangosteen, Bar, Seven, Cherry, Watermelon ,Bell, Bar3, Mangosteen, Bar2, Bar, Bell ,Watermelon, Cherry, Bar2, Seven ,Bar3, Seven3, Cherry, Watermelon });
 
-  set_reel(4, {Watermelon, Scatter, Seven3, Seven, Mangosteen, Bar3, Bar, Watermelon, Bell, Mangosteen ,Bar3, Seven, Bar, Seven3, Cherry, Bar2, Bar3, Seven, Wild, Bar, Bell, Cherry, Bar2, Seven, Watermelon, Bar, Seven3, Cherry, Bar3, Bar2, Mangosteen, Bell});
+  set_reel(4, { Watermelon, Scatter, Seven3, Seven, Mangosteen, Bar3, Bar, Watermelon, Bell, Mangosteen ,Bar3, Seven, Bar, Seven3, Cherry, Bar2, Bar3, Seven, Wild, Bar, Bell, Cherry, Bar2, Seven, Watermelon, Bar, Seven3, Cherry, Bar3, Bar2, Mangosteen, Bell });
 
   // 페이라인 지정
   pay_info_.add_payline(0,  {  1,  4,  7, 10, 13 }); //  1

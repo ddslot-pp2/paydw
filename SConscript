@@ -12,4 +12,4 @@ env.Append(LIBS=['pthread', 'boost_system', 'boost_regex', 'boost_thread', 'boos
 
 env.Append(LIBPATH=['/usr/local/lib'])
 
-env.Program('x', ['main.cpp', 'json11.cpp', 'handler_md.cpp', 'slot_md.cpp', 'slot.cpp', 'handler/user_info.cpp', 'handler/slot_info.cpp'])
+env.Program('x2', ['main.cpp', 'json11.cpp', 'handler_md.cpp', 'db_md.cpp', 'slot_md.cpp', 'slot.cpp', 'worker_md.cpp', 'scheduler_md.cpp', 'handler/user_info.cpp', 'handler/slot_info.cpp', 'handler/tournament_info.cpp'])

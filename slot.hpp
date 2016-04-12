@@ -86,7 +86,7 @@ private:
 class ddslot_classic : public slot {
 public:
 
-  enum symbols { Wild=0, Seven3, Seven, Bell, Bar3, Bar2, Bar, Mangosteen, Watermelon, Cherry, Scatter };
+  enum symbols { Wild=0, Seven3, Seven, Bell, Bar3, Bar2, Bar, Mangosteen, Watermelon, Cherry, Scatter, Any };
 
   ddslot_classic(int id);
   virtual ~ddslot_classic();
@@ -111,8 +111,3 @@ public:
 // 0   3   6    9   12
 // 1   4   7   10   13
 // 2   5   8   11   14
-
-
-// 2 5 8 11 14
-// 1 4 7 10 13
-// 0 3 6  9 12

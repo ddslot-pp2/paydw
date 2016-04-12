@@ -10,6 +10,9 @@
 #include "json11.hpp"
 #include "handler_md.hpp"
 #include "slot_md.hpp"
+#include "worker_md.hpp"
+#include "scheduler_md.hpp"
+#include "db_md.hpp"
 
 using namespace std;
 //Added for the json-example:
@@ -47,12 +50,14 @@ int main() {
       ptree pt;
       read_json(req->content, pt);
 
-      auto type = pt.get<string>("type");
+      auto type = pt.get<std::string>("type");
+
+      std::cout << "req: " << type << std::endl;
 	
       if(handler_md::get().is_payload(type)) {
 	handler_md::get().m_[type](response, pt);
       } else {
-	std::cout << "[error] 핸들러 없음" << std::endl;
+	std::cout << "[error] 핸들러 " << type << " 없음" << std::endl;
 	json11::Json res = json11::Json::object {
 	  { "type", "not_found_type" },
 	  { "ec", 45893 },
@@ -95,17 +100,45 @@ int main() {
   };
   
   handler_md::get().init();
-
-  slot_md::get().init();
- 
+  //slot_md::get().init(); 
   thread server_thread([&server](){
       server.start();
     });
 
   //Wait for server to start so that the client can connect
   this_thread::sleep_for(chrono::seconds(1));
-            
+
+  // db 작업
+  std::cout << "db접속 시도" << std::endl;
+  if(!db_md::get().init("52.34.125.190", "pay2", "badagl9721", 8)) {
+    std::cout << "db접속 실패" << std::endl;
+    return 1;
+  }
+
+  std::cout << "db접속 성공" << std::endl;
+
+  thread worker_thread([](){
+      worker_md::get().run(4);
+    });
+
+  /*
+  thread event_thread([](){
+      event_md::get().init();
+    });
+  this_thread::sleep_for(chrono::seconds(1));
+  */
+
+  scheduler_md::get().init();
+  thread scheduler_thread([](){
+      scheduler_md::get().run();
+    });
+
+  std::cout << "waitting for server, worker thread" << std::endl;
+  
   server_thread.join();
-    
+  worker_thread.join();
+  scheduler_thread.join();
+  //event_thread.join();
+
   return 0;
 }

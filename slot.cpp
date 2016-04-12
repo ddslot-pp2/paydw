@@ -80,6 +80,11 @@ bool paytable_classic::init() {
   r &= add_paytable(ddslot_classic::symbols::Cherry, 5,   50);
   r &= add_paytable(ddslot_classic::symbols::Cherry, 4,   25);
   r &= add_paytable(ddslot_classic::symbols::Cherry, 3,   10);
+
+  r &= add_paytable(ddslot_classic::symbols::Any, 5,   100);
+  r &= add_paytable(ddslot_classic::symbols::Any, 4,   25);
+  r &= add_paytable(ddslot_classic::symbols::Any, 3,   10);
+
   return r;
 }
 
@@ -158,8 +163,8 @@ bool payline_classic::add_payline(int number, std::vector<int> payline) {
 
 payline_classic::payline_result payline_classic::check_payline(int number, const std::vector<int>& out_symbols, bool is_freespin_on, int in_wild_symbol) {
   payline_classic::payline_result result; 
-  result.number = number + 1;
-  //result.number = number;
+  //result.number = number + 1;
+  result.number = number;
 
   payline& payline_info = paylines_[number];
   
@@ -212,9 +217,34 @@ payline_classic::payline_result payline_classic::check_payline(int number, const
       result.sequence++;
     }
 
+    /*
     if(result.symbol == -1) {
       result.symbol = symbols[0];
     }
+    */
+      // anybar 체크해줘야함
+      const int max_reel_count = 5;
+      auto any_sequence = 0;
+      for(auto i=0; i<max_reel_count; i++) {
+	if(symbols[i] == ddslot_classic::symbols::Bar3 || 
+	   symbols[i] == ddslot_classic::symbols::Bar2 ||
+	   symbols[i] == ddslot_classic::symbols::Bar  ||
+	   symbols[i] == ddslot_classic::symbols::Wild || 
+	   symbols[i] == in_wild_symbol) {
+	  any_sequence++;
+	} else {
+	  break;
+	}
+      }
+
+      if(any_sequence >= 3) {
+	if(result.sequence < any_sequence) {
+	  std::cout << "any 걸림" << std::endl;
+	  std::cout << "any sequence: " << any_sequence << std::endl;
+	  result.symbol = ddslot_classic::symbols::Any;
+	  result.sequence = any_sequence;
+	}
+      }
 
   } else {
     result.symbol = symbols[0];
@@ -226,7 +256,7 @@ payline_classic::payline_result payline_classic::check_payline(int number, const
       is_seqence = false;
     }
 
-    if(symbols[0] == symbols[2] || symbols[2] == ddslot_classic::symbols::Wild) {
+    if(symbols[0] == symbols[2]) {
       if(is_seqence) result.sequence++;
     } else {
       is_seqence = false;
@@ -238,10 +268,34 @@ payline_classic::payline_result payline_classic::check_payline(int number, const
       is_seqence = false;
     }
 
-    if(symbols[0] == symbols[4] || symbols[4] == ddslot_classic::symbols::Wild) {
+    if(symbols[0] == symbols[4]) {
       if(is_seqence) result.sequence++;
     } else {
       is_seqence = false;
+    }
+  }
+
+
+  // anybar 체크해줘야함
+  const int max_reel_count = 5;
+  auto any_sequence = 0;
+  for(auto i=0; i<max_reel_count; i++) {
+    if(symbols[i] == ddslot_classic::symbols::Bar3 || 
+       symbols[i] == ddslot_classic::symbols::Bar2 ||
+       symbols[i] == ddslot_classic::symbols::Bar  ||
+       symbols[i] == ddslot_classic::symbols::Wild) {
+      any_sequence++;
+    } else {
+      break;
+    }
+  }
+
+  if(any_sequence >= 3) {
+    if(result.sequence < any_sequence) {
+      std::cout << "any 걸림" << std::endl;
+      std::cout << "any sequence: " << any_sequence << std::endl;
+      result.symbol = ddslot_classic::symbols::Any;
+      result.sequence = any_sequence;
     }
   }
 

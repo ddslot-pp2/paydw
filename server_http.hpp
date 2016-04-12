@@ -189,7 +189,8 @@ namespace SimpleWeb {
             acceptor.close();
             io_service.stop();
         }
-
+      
+      boost::asio::io_service& get_io_service() { return io_service; }
     protected:
         boost::asio::io_service io_service;
         boost::asio::ip::tcp::acceptor acceptor;
