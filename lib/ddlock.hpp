@@ -5,7 +5,7 @@ class spin_mutex
 public:
   void lock()
   {
-    std::cout << "spin lock start" << std::endl;
+    //std::cout << "spin lock start" << std::endl;
     while(lck.test_and_set(std::memory_order_acquire))
       {}
   }
@@ -13,7 +13,7 @@ public:
   void unlock()
   {
     lck.clear(std::memory_order_release);
-    std::cout << "spin lock end" << std::endl;
+    //std::cout << "spin lock end" << std::endl;
   }
  
 private:

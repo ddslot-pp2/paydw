@@ -25,5 +25,7 @@ bool handler_md::init() {
   r &= ADD_PAYLOAD(tournament_update_req);
   r &= ADD_PAYLOAD(tournament_reward_req);
 
+  r &= ADD_PAYLOAD(sync_timestamp_req);
+
   return r;
 }

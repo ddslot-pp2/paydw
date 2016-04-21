@@ -7,3 +7,4 @@ using HttpServer = SimpleWeb::Server<SimpleWeb::HTTP>;
 
 void login_req(HttpServer::Response& response, const ptree& payload);
 void uid_req(HttpServer::Response& response, const ptree& payload);
+void uid_fb_req(HttpServer::Response& response, const ptree& payload);

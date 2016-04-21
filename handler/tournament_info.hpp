@@ -16,7 +16,10 @@ struct tournament_info {
 
 int find_user_index(int uid, const std::vector<tournament_info>& tournament_infos);
 std::string get_tournament_infos(int uid, const std::vector<tournament_info>& tournament_infos);
+std::string get_img_url(std::string fid);
 
 void tournament_refresh_req(HttpServer::Response& response, const ptree& payload);
 void tournament_update_req(HttpServer::Response& response, const ptree& payload);
 void tournament_reward_req(HttpServer::Response& response, const ptree& payload);
+
+void sync_timestamp_req(HttpServer::Response& response, const ptree& payload);

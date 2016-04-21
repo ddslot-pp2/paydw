@@ -5,22 +5,32 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <tuple>
 #include "lib/ddlock.hpp"
+#include <boost/asio.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 class tournament {
 public:
   tournament();
+  tournament(int start_bet, int end_bet);
   ~tournament() {}
 
-  void add_win_credit(int credit);
-  int get_win_credit() { return win_credit_; }
+  void add_bet_credit(int bet_credit);
+  int get_bet_credit() { return bet_credits_; }
 
-  std::string get_name(int uid);
-  void set_name(int uid, std::string name);
+  std::tuple<std::string, std::string> get_user_info(int uid);
+  void set_user_info(int uid, std::tuple<std::string, std::string> user_info);
+
+  int get_prize_pool();
+  void reset();
 
 private:
-  std::atomic<int> win_credit_;
+  int start_bet_;
+  int end_bet_;
+  std::atomic<int> bet_credits_;
   std::map<int, std::string> names_;
+  std::map<int, std::tuple<std::string, std::string>> user_infos_;
   spin_mutex m;
 };
 
@@ -57,6 +67,8 @@ public:
 
   static const int max_tournament_zone = 3;
   std::vector<tournament_ptr> tournaments_;
+
+  boost::asio::io_service io_service_;
 };
 
 #endif
