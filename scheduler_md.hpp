@@ -29,7 +29,7 @@ private:
   int start_bet_;
   int end_bet_;
   std::atomic<int> bet_credits_;
-  std::map<int, std::string> names_;
+  //std::map<int, std::string> names_;
   std::map<int, std::tuple<std::string, std::string>> user_infos_;
   spin_mutex m;
 };

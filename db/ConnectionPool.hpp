@@ -69,13 +69,13 @@ public:
   ~ConnectionPool() {
   };
 
-  std::shared_ptr<T> borrow(){
+  std::shared_ptr<T> borrow() {
 
     // Lock
     std::lock_guard<std::mutex> lock(this->io_mutex);
 
     // Check for a free connection
-    if(this->pool.size()==0){
+    if(this->pool.size()==0) {
 
       // Are there any crashed connections listed as "borrowed"?
       for(std::set<std::shared_ptr<Connection> >::iterator it=this->borrowed.begin(); it!=this->borrowed.end(); ++it){
@@ -113,6 +113,7 @@ public:
 
     return std::static_pointer_cast<T>(conn);
   };
+
   void unborrow(std::shared_ptr<T> conn) {
 
     // Lock
